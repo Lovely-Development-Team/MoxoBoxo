@@ -2,12 +2,17 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\MottoRepository;
 use DateTime;
 use Doctrine\DBAL\Types\DateTimeImmutableType;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * @ApiResource(
+ *     shortName="mottos"
+ * )
+ *
  * @ORM\Entity(repositoryClass=MottoRepository::class)
  */
 class Motto
