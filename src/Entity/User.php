@@ -3,14 +3,20 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     normalizationContext={"groups"={"user:read"}, "swagger_definition_name"="Read"},
+ *     denormalizationContext={"groups"={"user:write"}, "swagger_definition_name"="Write"}
+ * )
+ * @UniqueEntity(fields={"username"})
  *
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
@@ -18,6 +24,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface
 {
     /**
+     * Internal generated user ID
+     * @Groups({"user:read"})
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -25,7 +33,9 @@ class User implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
+     * Discord Username
+     * @Groups({"user:read", "user:write"})
+     * @ORM\Column(type="string", length=180, nullable=true, unique=true)
      */
     private $username;
 
@@ -35,44 +45,49 @@ class User implements UserInterface
     private $roles = [];
 
     /**
+     * @Groups({"user:read", "user:write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $Nickname;
 
     /**
+     * @Groups({"user:read", "user:write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $Emoji;
 
     /**
+     * @Groups({"user:read", "user:write"})
      * @ORM\Column(type="integer")
      */
     private $DiscordId;
 
     /**
+     * @Groups({"user:read"})
      * @ORM\Column(type="boolean")
      */
     private $IsSupport;
 
     /**
+     * @Groups({"user:read", "user:write"})
      * @ORM\Column(type="boolean")
      */
     private $UseNickname;
 
     /**
+     * @Groups({"user:read"})
      * @ORM\OneToMany(targetEntity=Motto::class, mappedBy="Author", orphanRemoval=true)
      */
     private $mottos;
 
     /**
+     * @Groups({"user:read"})
      * @ORM\OneToMany(targetEntity=Motto::class, mappedBy="NominatedBy")
      */
     private $nominatedMottos;
 
     /**
      * User constructor.
-     * @param bool $IsSupport
-     * @param bool $UseNickname
      */
     public function __construct()
     {
